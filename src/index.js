@@ -1,3 +1,5 @@
+let movieListItems;
+
 function fetchMovies() {
   return fetch('http://localhost:3000/films')
     .then(function(response) {
@@ -48,12 +50,19 @@ function displayMovieDetails(movie) {
 function populateMovieMenu(movieList) {
   const filmsList = document.getElementById('films');
   filmsList.innerHTML = '';
+  movieListItems = [];
+
   movieList.forEach(function(movie) {
     const listItem = document.createElement('li');
     listItem.classList.add('film', 'item');
     listItem.textContent = movie.title;
     listItem.dataset.movieId = movie.id;
     listItem.addEventListener('click', function() {
+      console.log('Movie clicked:', movie.title);
+      movieListItems.forEach(function(item) {
+        item.classList.remove('selected');
+      });
+      listItem.classList.add('selected');
       fetchMovieById(movie.id)
         .then(function(movieDetails) {
           displayMovieDetails(movieDetails);
@@ -63,6 +72,7 @@ function populateMovieMenu(movieList) {
         });
     });
     filmsList.appendChild(listItem);
+    movieListItems.push(listItem);
   });
 }
 
@@ -119,15 +129,5 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
       console.error('No movie selected.');
     }
-  });
-
-  const movieListItems = document.querySelectorAll('.film.item');
-  movieListItems.forEach(function(item) {
-    item.addEventListener('click', function() {
-      movieListItems.forEach(function(item) {
-        item.classList.remove('selected');
-      });
-      item.classList.add('selected');
-    });
   });
 });
